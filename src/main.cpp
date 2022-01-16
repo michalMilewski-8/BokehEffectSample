@@ -95,8 +95,8 @@ int main() {
 	float modelAngle = 0;
 
 	float A = 0.025;
-	float S1 = 0.5;
-	float f = 0.1;
+	float S1 = 15;
+	float f = 1;
 	float Far = 40;
 	float maxCoc = 1;
 	float sensorHeight = 0.024f;
@@ -330,6 +330,55 @@ int main() {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
+		glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
+		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(oldModelMatrix));
+		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(oldViewMatrix));
+
+		glUniform1i(20, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindVertexArray(map.vao);
+		glDrawArrays(GL_TRIANGLES, 0, map.count);
+
+
+		modelMatrix = glm::mat4(1);
+		modelMatrix = glm::translate(modelMatrix, { 3, glm::sin(glm::radians(modelAngle)), -3 });
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(modelAngle), { 0, 1, 0 });
+
+		glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
+		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(oldModelMatrix));
+		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(oldViewMatrix));
+
+		glUniform1i(20, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindVertexArray(map.vao);
+		glDrawArrays(GL_TRIANGLES, 0, map.count);
+
+		modelMatrix = glm::mat4(1);
+		modelMatrix = glm::translate(modelMatrix, { -3 , glm::sin(glm::radians(modelAngle)), 3 });
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(modelAngle), { 0, 1, 0 });
+
+		glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
+		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(oldModelMatrix));
+		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(oldViewMatrix));
+
+		glUniform1i(20, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindVertexArray(map.vao);
+		glDrawArrays(GL_TRIANGLES, 0, map.count);
+
+		modelMatrix = glm::mat4(1);
+		modelMatrix = glm::translate(modelMatrix, { 3 , glm::sin(glm::radians(modelAngle)), 30 });
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(modelAngle), { 0, 1, 0 });
+
 		glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 		glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
