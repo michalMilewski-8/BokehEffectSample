@@ -14,11 +14,15 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include "Program.h"
+
 constexpr int WindowWidth = 1280;
 constexpr int WindowHeight = 720;
 constexpr float Pi = 3.14159265359;
 
 constexpr int N = 144;
+
+std::shared_ptr<Program> program;
 
 std::vector<glm::vec2> CreateOffsets(float angle) {
 	std::vector<glm::vec2> offsets = std::vector<glm::vec2>(N);
@@ -32,7 +36,7 @@ std::vector<glm::vec2> CreateOffsets(float angle) {
 
 	for (int i = 0; i < N; i++) {
 		float t = i / (N - 1.0f);
-		offsets[i] = -pt+ 2.0f*pt*t;
+		offsets[i] = -pt + 2.0f * pt * t;
 	}
 	return offsets;
 }
@@ -45,11 +49,21 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 void RenderGui()
 {
+	ImGui::Begin("Menu");
+
+	ImGui::SliderFloat("A", &program->A, 0.0f, 1.0f);
+	ImGui::SliderFloat("S1", &program->S1, 0.0f, 100.0f);
+	ImGui::SliderFloat("f", &program->f, 0.0f, 10.0f);
+	ImGui::SliderFloat("Far", &program->Far, 0.0f, 100.0f);
+	ImGui::SliderFloat("maxCoc", &program->maxCoc, 0.0f, 100.0f);
+	ImGui::SliderFloat("sensorHeight", &program->sensorHeight, 0.0f, 1.0f);
+
+	ImGui::End();
 }
 int main() {
-	
+
 	// WINDOW SETUP
-	
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -57,6 +71,7 @@ int main() {
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
+	program = std::make_shared<Program>();
 	GLFWwindow* window = glfwCreateWindow(WindowWidth, WindowHeight, "Motion Blur", nullptr, nullptr);
 	if (window == nullptr)
 	{
@@ -80,11 +95,11 @@ int main() {
 	double time = glfwGetTime();
 
 	// OBJECT CREATION
-	
+
 	Mesh map = loadMesh("assets/float.obj");
 	Mesh quad = makeQuad();
 	Mesh sky = makeCube();
-	GLuint firstProgram = loadShaders("assets/first.vert", "assets/first.frag"); 
+	GLuint firstProgram = loadShaders("assets/first.vert", "assets/first.frag");
 	GLuint skyProgram = loadShaders("assets/sky.vert", "assets/sky.frag");
 	GLuint quadProgram = loadShaders("assets/quad.vert", "assets/quad.frag");
 	// TODO 2.1: Utworzenie oraz wczytanie programu odpowiedzialnego za rozmycie obrazu
@@ -93,30 +108,23 @@ int main() {
 	GLuint blur3Program = loadShaders("assets/quad.vert", "assets/blur3.frag");
 	GLuint texture = loadTexture("assets/texture.jpg");
 	GLuint skyTexture = loadTexture("assets/canyon.jpg");
-	
-	glm::vec3 cameraPos = {0, 0, -5};
-	glm::vec2 cameraRotationDegrees = {0,0};
+
+	glm::vec3 cameraPos = { 0, 0, -5 };
+	glm::vec2 cameraRotationDegrees = { 0,0 };
 	double cursorX, cursorY;
 	glfwGetCursorPos(window, &cursorX, &cursorY);
 	int spaceState = GLFW_RELEASE;
 	bool running = true;
-	
+
 	glm::mat4 modelMatrix = glm::mat4(1);
 	glm::mat4 oldModelMatrix = glm::mat4(1);
 	glm::mat4 viewMatrix = glm::mat4(1);
 	glm::mat4 oldViewMatrix = glm::mat4(1);
-	glm::mat4 perspectiveMatrix = glm::perspective(glm::radians(45.f), WindowWidth / (float) WindowHeight, 0.1f, 40.f);
+	glm::mat4 perspectiveMatrix = glm::perspective(glm::radians(45.f), WindowWidth / (float)WindowHeight, 0.1f, 40.f);
 	float modelAngle = 0;
 
-	float A = 0.025;
-	float S1 = 15;
-	float f = 1;
-	float Far = 40;
-	float maxCoc = 1;
-	float sensorHeight = 0.024f;
-	
 	// FRAMEBUFFER CREATION
-	
+
 	GLuint gBuffer;
 	glGenFramebuffers(1, &gBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
@@ -171,7 +179,7 @@ int main() {
 
 	// TODO 4: Dodanie tekstury predkosci do listy attachmentow
 	unsigned int attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
-	glDrawBuffers(sizeof(attachments)/ sizeof(*attachments), attachments);
+	glDrawBuffers(sizeof(attachments) / sizeof(*attachments), attachments);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		std::cout << "Framebuffer incomplete" << '\n';
@@ -261,17 +269,14 @@ int main() {
 	ImGui_ImplOpenGL3_Init("#version 130");
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
-	while(!glfwWindowShouldClose(window))
+	while (!glfwWindowShouldClose(window))
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 		//ImGui::ShowDemoWindow();
 		RenderGui();
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		glfwPollEvents();
 		double newTime = glfwGetTime();
 		float dt = static_cast<float>(newTime - time);
 		time = newTime;
@@ -280,9 +285,9 @@ int main() {
 		if (newSpaceState == GLFW_PRESS && spaceState == GLFW_RELEASE) running = !running;
 		spaceState = newSpaceState;
 
-		
+
 		// OBJECT POSITION UPDATE
-		
+
 		if (running) {
 			// TODO 5: Zapisywanie poprzedniej macierzy modelu
 			oldModelMatrix = modelMatrix;
@@ -293,7 +298,7 @@ int main() {
 			modelAngle += step * 300;
 			while (modelAngle > 360) modelAngle -= 360;
 			modelMatrix = glm::mat4(1);
-			modelMatrix = glm::translate(modelMatrix, {0, glm::sin(glm::radians(modelAngle)), 3 });
+			modelMatrix = glm::translate(modelMatrix, { 0, glm::sin(glm::radians(modelAngle)), 3 });
 			modelMatrix = glm::rotate(modelMatrix, glm::radians(modelAngle), { 0, 1, 0 });
 		}
 
@@ -325,36 +330,37 @@ int main() {
 		}
 
 		if (running || moveCamera) {
-		    // TODO 6: Zapisywanie poprzedniej macierzy widoku
+			// TODO 6: Zapisywanie poprzedniej macierzy widoku
 			oldViewMatrix = viewMatrix;
 		}
 
-		viewMatrix = glm::mat4(1);
-		viewMatrix = glm::rotate(viewMatrix, glm::radians(cameraRotationDegrees.x), { 1, 0, 0 });
-		viewMatrix = glm::rotate(viewMatrix, glm::radians(cameraRotationDegrees.y), { 0, 1, 0 });
+		if (!ImGui::GetIO().WantCaptureMouse) {
+			viewMatrix = glm::mat4(1);
+			viewMatrix = glm::rotate(viewMatrix, glm::radians(cameraRotationDegrees.x), { 1, 0, 0 });
+			viewMatrix = glm::rotate(viewMatrix, glm::radians(cameraRotationDegrees.y), { 0, 1, 0 });
 
-		glm::vec4 cameraFront = { 0, 0, 1, 0 };
-		glm::vec4 cameraUp = { 0, 1, 0, 0 };
-		glm::vec4 cameraSide = { 1, 0, 0, 0 };
+			glm::vec4 cameraFront = { 0, 0, 1, 0 };
+			glm::vec4 cameraUp = { 0, 1, 0, 0 };
+			glm::vec4 cameraSide = { 1, 0, 0, 0 };
 
-		cameraFront = cameraFront * viewMatrix;
-		//cameraUp = cameraUp * viewMatrix;
-		cameraSide = cameraSide * viewMatrix;
+			cameraFront = cameraFront * viewMatrix;
+			//cameraUp = cameraUp * viewMatrix;
+			cameraSide = cameraSide * viewMatrix;
 
-		const float movementSpeed = 5.0f * dt;
-		if (goForward) cameraPos += glm::vec3(cameraFront) * movementSpeed;
-		if (goBack) cameraPos -= glm::vec3(cameraFront) * movementSpeed;
-		if (goLeft) cameraPos += glm::vec3(cameraSide) * movementSpeed;
-		if (goRight) cameraPos -= glm::vec3(cameraSide) * movementSpeed;
-		if (goUp) cameraPos -= glm::vec3(cameraUp) * movementSpeed;
-		if (goDown) cameraPos += glm::vec3(cameraUp) * movementSpeed;
+			const float movementSpeed = 5.0f * dt;
+			if (goForward) cameraPos += glm::vec3(cameraFront) * movementSpeed;
+			if (goBack) cameraPos -= glm::vec3(cameraFront) * movementSpeed;
+			if (goLeft) cameraPos += glm::vec3(cameraSide) * movementSpeed;
+			if (goRight) cameraPos -= glm::vec3(cameraSide) * movementSpeed;
+			if (goUp) cameraPos -= glm::vec3(cameraUp) * movementSpeed;
+			if (goDown) cameraPos += glm::vec3(cameraUp) * movementSpeed;
 
-		viewMatrix = glm::translate(viewMatrix, cameraPos);
-
+			viewMatrix = glm::translate(viewMatrix, cameraPos);
+		}
 		// RENDERING STAGE 1
-		
+
 		// STAGE 1 - object
-		
+
 		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(firstProgram);
@@ -423,7 +429,7 @@ int main() {
 		glDrawArrays(GL_TRIANGLES, 0, map.count);
 
 		// STAGE 1 - skybox
-		
+
 		glUseProgram(skyProgram);
 		glDepthFunc(GL_LEQUAL);
 		glDisable(GL_CULL_FACE);
@@ -464,19 +470,19 @@ int main() {
 		// MM: update tekstury koloru
 		glBindFramebuffer(GL_FRAMEBUFFER, gBlurBuffer);
 		glUseProgram(blurProgram);
-		
+
 		// Uniforms MM: podpinanie tekstur potrzebnych do nadania efektu
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, gCol);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, gDepth);
 
-		glUniform1f(2, A);
-		glUniform1f(3, S1);
-		glUniform1f(4, f);
-		glUniform1f(5, Far);
-		glUniform1f(6, maxCoc);
-		glUniform1f(7, sensorHeight);
+		glUniform1f(2, program->A);
+		glUniform1f(3, program->S1);
+		glUniform1f(4, program->f);
+		glUniform1f(5, program->Far);
+		glUniform1f(6, program->maxCoc);
+		glUniform1f(7, program->sensorHeight);
 
 		glBindVertexArray(quad.vao);
 		glDrawArrays(GL_TRIANGLES, 0, quad.count);
@@ -529,8 +535,11 @@ int main() {
 		glDrawArrays(GL_TRIANGLES, 0, quad.count);
 
 		// SWAP
-		
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 		glfwSwapBuffers(window);
+		glfwPollEvents();
+
 	}
 
 	glfwTerminate();
