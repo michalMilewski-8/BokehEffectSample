@@ -15,6 +15,7 @@
 #include "imgui_impl_opengl3.h"
 
 #include "Program.h"
+#include "Object.h"
 
 constexpr int WindowWidth = 1280;
 constexpr int WindowHeight = 720;
@@ -23,6 +24,7 @@ constexpr float Pi = 3.14159265359;
 constexpr int N = 144;
 
 std::shared_ptr<Program> program;
+std::vector<Object> objects;
 
 std::vector<glm::vec2> CreateOffsets(float angle) {
 	std::vector<glm::vec2> offsets = std::vector<glm::vec2>(N);
@@ -96,7 +98,7 @@ int main() {
 
 	// OBJECT CREATION
 
-	Mesh map = loadMesh("assets/float.obj");
+	Mesh map = loadMesh("assets/alduin-dragon-obj/alduin-dragon.obj");
 	Mesh quad = makeQuad();
 	Mesh sky = makeCube();
 	GLuint firstProgram = loadShaders("assets/first.vert", "assets/first.frag");
@@ -116,8 +118,7 @@ int main() {
 	int spaceState = GLFW_RELEASE;
 	bool running = true;
 
-	glm::mat4 modelMatrix = glm::mat4(1);
-	glm::mat4 oldModelMatrix = glm::mat4(1);
+
 	glm::mat4 viewMatrix = glm::mat4(1);
 	glm::mat4 oldViewMatrix = glm::mat4(1);
 	glm::mat4 perspectiveMatrix = glm::perspective(glm::radians(45.f), WindowWidth / (float)WindowHeight, 0.1f, 40.f);
@@ -269,6 +270,8 @@ int main() {
 	ImGui_ImplOpenGL3_Init("#version 130");
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
+
+	objects.push_back(Object(map, 0.001f));
 	while (!glfwWindowShouldClose(window))
 	{
 		ImGui_ImplOpenGL3_NewFrame();
@@ -288,18 +291,9 @@ int main() {
 
 		// OBJECT POSITION UPDATE
 
+		float scale = 0.001f;
 		if (running) {
-			// TODO 5: Zapisywanie poprzedniej macierzy modelu
-			oldModelMatrix = modelMatrix;
-
-			static float speed = 0;
-			speed += dt / 2;
-			float step = dt * glm::sin(speed);
-			modelAngle += step * 300;
-			while (modelAngle > 360) modelAngle -= 360;
-			modelMatrix = glm::mat4(1);
-			modelMatrix = glm::translate(modelMatrix, { 0, glm::sin(glm::radians(modelAngle)), 3 });
-			modelMatrix = glm::rotate(modelMatrix, glm::radians(modelAngle), { 0, 1, 0 });
+			for (auto& obj : objects) obj.UpdateObject(dt);
 		}
 
 		// CAMERA UPDATE
@@ -367,66 +361,21 @@ int main() {
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
-		glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-		glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
-		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(oldModelMatrix));
-		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(oldViewMatrix));
 
-		glUniform1i(20, 0);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glBindVertexArray(map.vao);
-		glDrawArrays(GL_TRIANGLES, 0, map.count);
+		for (auto& obj : objects)
+		{
+			glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(obj.modelMatrix));
+			glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+			glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
+			glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(obj.oldModelMatrix));
+			glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(oldViewMatrix));
 
-
-		modelMatrix = glm::mat4(1);
-		modelMatrix = glm::translate(modelMatrix, { 3, glm::sin(glm::radians(modelAngle)), -3 });
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(modelAngle), { 0, 1, 0 });
-
-		glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-		glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
-		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(oldModelMatrix));
-		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(oldViewMatrix));
-
-		glUniform1i(20, 0);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glBindVertexArray(map.vao);
-		glDrawArrays(GL_TRIANGLES, 0, map.count);
-
-		modelMatrix = glm::mat4(1);
-		modelMatrix = glm::translate(modelMatrix, { -3 , glm::sin(glm::radians(modelAngle)), 3 });
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(modelAngle), { 0, 1, 0 });
-
-		glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-		glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
-		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(oldModelMatrix));
-		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(oldViewMatrix));
-
-		glUniform1i(20, 0);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glBindVertexArray(map.vao);
-		glDrawArrays(GL_TRIANGLES, 0, map.count);
-
-		modelMatrix = glm::mat4(1);
-		modelMatrix = glm::translate(modelMatrix, { 3 , glm::sin(glm::radians(modelAngle)), 30 });
-		modelMatrix = glm::rotate(modelMatrix, glm::radians(modelAngle), { 0, 1, 0 });
-
-		glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-		glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
-		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(oldModelMatrix));
-		glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(oldViewMatrix));
-
-		glUniform1i(20, 0);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glBindVertexArray(map.vao);
-		glDrawArrays(GL_TRIANGLES, 0, map.count);
+			glUniform1i(20, 0);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			glBindVertexArray(map.vao);
+			glDrawArrays(GL_TRIANGLES, 0, map.count);
+		}
 
 		// STAGE 1 - skybox
 

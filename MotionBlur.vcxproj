@@ -173,6 +173,7 @@
     <ClCompile Include="lib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +188,7 @@
     <ClInclude Include="lib\imgui\imstb_textedit.h" />
     <ClInclude Include="lib\imgui\imstb_truetype.h" />
     <ClInclude Include="mesh.hpp" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="src\stb_image.h" />
     <ClInclude Include="stb_image.h" />
