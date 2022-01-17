@@ -10,6 +10,9 @@
 #include "mesh.hpp"
 #include "utils.hpp"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 constexpr int WindowWidth = 1280;
 constexpr int WindowHeight = 720;
@@ -34,6 +37,15 @@ std::vector<glm::vec2> CreateOffsets(float angle) {
 	return offsets;
 }
 
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (ImGui::GetIO().WantCaptureMouse) return;
+	//TBD
+}
+
+void RenderGui()
+{
+}
 int main() {
 	
 	// WINDOW SETUP
@@ -62,6 +74,8 @@ int main() {
 
 	glViewport(0, 0, WindowWidth, WindowHeight);
 	glClearColor(0, 0, 0, 1);
+
+	glfwSetCursorPosCallback(window, mouse_callback);
 
 	double time = glfwGetTime();
 
@@ -237,8 +251,25 @@ int main() {
 	auto offsets2 = CreateOffsets((Pi / 4.0f));
 	auto offsets3 = CreateOffsets(0.0f);
 
+
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	// Setup Platform/Renderer bindings
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init("#version 130");
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
 	while(!glfwWindowShouldClose(window))
 	{
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		//ImGui::ShowDemoWindow();
+		RenderGui();
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwPollEvents();
 		double newTime = glfwGetTime();
