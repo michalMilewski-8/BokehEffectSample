@@ -35,6 +35,7 @@ Mesh loadMesh(const char *filename) {
 		if (header == "vt") {
 			glm::vec2 t;
 			file >> t.x >> t.y;
+			t.y = 1.0f - t.y;
 			loadedUvs.push_back(t);
 		}
 

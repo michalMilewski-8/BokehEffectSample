@@ -18,7 +18,7 @@ void main() {
 	position = fragPos;
 	normal = fragNormal;
 	color = vec3(0.0);
-	emission = texture(colorTexture, fragTexCoord).rgb;
+	color = texture(colorTexture, fragTexCoord).rgb;
 
 	vec2 oldPos = oldPosition.xy / oldPosition.w;
 	vec2 newPos = newPosition.xy / newPosition.w;

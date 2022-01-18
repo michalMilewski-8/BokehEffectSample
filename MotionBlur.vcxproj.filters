@@ -37,6 +37,7 @@
     <ClCompile Include="Object.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\imgui\imconfig.h">
@@ -85,6 +86,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

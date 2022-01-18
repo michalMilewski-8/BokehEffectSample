@@ -21,6 +21,6 @@ void main() {
 	vec3 toCamera = -normalize(position);
 	float a = dot(normal, toCamera);
 	if (isnan(a)) a = 0;
-	color = vec4(a * albedo + emission, 1);
+	color = vec4(albedo,1);//vec4(a * albedo + emission, 1);
 }
 

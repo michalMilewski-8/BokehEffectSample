@@ -1,13 +1,15 @@
 #pragma once
-#include "mesh.hpp"
+#include "Model.h"
+#include <memory>
 struct Object
 {
-	Object(Mesh mesh_,float scale_);
-	Mesh mesh;
+	Object(std::shared_ptr<Model> model_, float scale_,glm::vec3 pos_);
+	std::shared_ptr<Model> model;
 	glm::mat4 modelMatrix;
 	glm::mat4 oldModelMatrix;
 	float speed;
 	float angle;
 	float scale;
+	glm::vec3 pos;
 	void UpdateObject(float dt);
 };

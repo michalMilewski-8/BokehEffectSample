@@ -25,6 +25,8 @@ constexpr int N = 144;
 
 std::shared_ptr<Program> program;
 std::vector<Object> objects;
+std::shared_ptr<Model> dragon;
+std::shared_ptr<Model> fox;
 
 std::vector<glm::vec2> CreateOffsets(float angle) {
 	std::vector<glm::vec2> offsets = std::vector<glm::vec2>(N);
@@ -98,7 +100,6 @@ int main() {
 
 	// OBJECT CREATION
 
-	Mesh map = loadMesh("assets/alduin-dragon-obj/alduin-dragon.obj");
 	Mesh quad = makeQuad();
 	Mesh sky = makeCube();
 	GLuint firstProgram = loadShaders("assets/first.vert", "assets/first.frag");
@@ -108,8 +109,14 @@ int main() {
 	GLuint blurProgram = loadShaders("assets/quad.vert", "assets/blur.frag");
 	GLuint blur2Program = loadShaders("assets/quad.vert", "assets/blur2.frag");
 	GLuint blur3Program = loadShaders("assets/quad.vert", "assets/blur3.frag");
-	GLuint texture = loadTexture("assets/texture.jpg");
 	GLuint skyTexture = loadTexture("assets/canyon.jpg");
+	dragon = std::make_shared<Model>
+		("assets/alduin-dragon-obj/alduin-dragon.obj",
+		"assets/alduin-dragon-obj/alduin.jpg");
+
+	fox = std::make_shared<Model>
+		("assets/low-poly-fox-by-pixelmannen-obj/low-poly-fox-by-pixelmannen.obj",
+			"assets/low-poly-fox-by-pixelmannen-obj/texture.png");
 
 	glm::vec3 cameraPos = { 0, 0, -5 };
 	glm::vec2 cameraRotationDegrees = { 0,0 };
@@ -271,7 +278,9 @@ int main() {
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 
-	objects.push_back(Object(map, 0.001f));
+	objects.push_back(Object(fox, 0.01f, { -0.5f,0.0f,0.0f }));
+	objects.push_back(Object(dragon, 0.001f, {0.5f,0.0f,0.0f}));
+
 	while (!glfwWindowShouldClose(window))
 	{
 		ImGui_ImplOpenGL3_NewFrame();
@@ -369,12 +378,14 @@ int main() {
 			glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
 			glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(obj.oldModelMatrix));
 			glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(oldViewMatrix));
+			glUniformMatrix4fv(15, 1, GL_FALSE, glm::value_ptr(glm::inverse(viewMatrix)));
+			glUniformMatrix4fv(16, 1, GL_FALSE, glm::value_ptr(glm::inverse(obj.modelMatrix)));
 
 			glUniform1i(20, 0);
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texture);
-			glBindVertexArray(map.vao);
-			glDrawArrays(GL_TRIANGLES, 0, map.count);
+			glBindTexture(GL_TEXTURE_2D, obj.model->texture);
+			glBindVertexArray(obj.model->mesh.vao);
+			glDrawArrays(GL_TRIANGLES, 0, obj.model->mesh.count);
 		}
 
 		// STAGE 1 - skybox
