@@ -101,7 +101,7 @@ int main() {
 	// OBJECT CREATION
 
 	Mesh quad = makeQuad();
-	Mesh sky = makeCube(40.0f);
+	Mesh sky = makeCube(10.0f);
 	GLuint firstProgram = loadShaders("assets/first.vert", "assets/first.frag");
 	GLuint skyProgram = loadShaders("assets/sky.vert", "assets/sky.frag");
 	GLuint quadProgram = loadShaders("assets/quad.vert", "assets/quad.frag");
@@ -112,11 +112,13 @@ int main() {
 	GLuint skyTexture = loadTexture("assets/canyon.jpg");
 	dragon = std::make_shared<Model>
 		("assets/alduin-dragon-obj/alduin-dragon.obj",
-		"assets/alduin-dragon-obj/alduin.jpg");
+			"assets/alduin-dragon-obj/alduin.jpg"
+			, 1.0f);
 
 	fox = std::make_shared<Model>
 		("assets/low-poly-fox-by-pixelmannen-obj/low-poly-fox-by-pixelmannen.obj",
-			"assets/low-poly-fox-by-pixelmannen-obj/texture.png");
+			"assets/low-poly-fox-by-pixelmannen-obj/texture.png"
+			, 1.0f);
 
 	glm::vec3 cameraPos = { 0, 0, -5 };
 	glm::vec2 cameraRotationDegrees = { 0,0 };
@@ -258,8 +260,8 @@ int main() {
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 
-	objects.push_back(Object(fox, 0.01f, { -0.5f,0.0f,0.0f }));
-	objects.push_back(Object(dragon, 0.001f, {0.5f,0.0f,0.0f}));
+	//objects.push_back(Object(fox, { 0.0f,0.0f,0.0f }));
+	objects.push_back(Object(dragon, { 0.0f,0.0f,0.0f }));
 
 	while (!glfwWindowShouldClose(window))
 	{
