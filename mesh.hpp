@@ -20,4 +20,4 @@ struct Mesh {
 
 Mesh loadMesh(const char* filename);
 Mesh makeQuad();
-Mesh makeCube();
+Mesh makeCube(float size);

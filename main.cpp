@@ -101,7 +101,7 @@ int main() {
 	// OBJECT CREATION
 
 	Mesh quad = makeQuad();
-	Mesh sky = makeCube();
+	Mesh sky = makeCube(40.0f);
 	GLuint firstProgram = loadShaders("assets/first.vert", "assets/first.frag");
 	GLuint skyProgram = loadShaders("assets/sky.vert", "assets/sky.frag");
 	GLuint quadProgram = loadShaders("assets/quad.vert", "assets/quad.frag");

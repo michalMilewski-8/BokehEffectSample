@@ -159,15 +159,15 @@ Mesh makeQuad() {
 	return ret;
 }
 
-Mesh makeCube() {
+Mesh makeCube(float size) {
 	Mesh ret;
 
-	ret.positions.push_back({-1, -1, -1});
-	ret.positions.push_back({1, -1, -1});
-	ret.positions.push_back({-1, 1, -1});
-	ret.positions.push_back({-1, 1, -1});
-	ret.positions.push_back({1, -1, -1});
-	ret.positions.push_back({1, 1, -1});
+	ret.positions.push_back({-size, -size, -size});
+	ret.positions.push_back({size, -size, -size});
+	ret.positions.push_back({-size, size, -size});
+	ret.positions.push_back({-size, size, -size});
+	ret.positions.push_back({size, -size, -size});
+	ret.positions.push_back({size, size, -size});
 	ret.uvs.push_back({0./4., 2./3.});
 	ret.uvs.push_back({1./4., 2./3.});
 	ret.uvs.push_back({0./4., 1./3.});
@@ -175,12 +175,12 @@ Mesh makeCube() {
 	ret.uvs.push_back({1./4., 2./3.});
 	ret.uvs.push_back({1./4., 1./3.});
 
-	ret.positions.push_back({1, -1, -1});
-	ret.positions.push_back({1, -1, 1});
-	ret.positions.push_back({1, 1, -1});
-	ret.positions.push_back({1, 1, -1});
-	ret.positions.push_back({1, -1, 1});
-	ret.positions.push_back({1, 1, 1});
+	ret.positions.push_back({size, -size, -size});
+	ret.positions.push_back({size, -size, size});
+	ret.positions.push_back({size, size, -size});
+	ret.positions.push_back({size, size, -size});
+	ret.positions.push_back({size, -size, size});
+	ret.positions.push_back({size, size, size});
 	ret.uvs.push_back({1./4., 2./3.});
 	ret.uvs.push_back({2./4., 2./3.});
 	ret.uvs.push_back({1./4., 1./3.});
@@ -188,12 +188,12 @@ Mesh makeCube() {
 	ret.uvs.push_back({2./4., 2./3.});
 	ret.uvs.push_back({2./4., 1./3.});
 
-	ret.positions.push_back({-1, -1, 1});
-	ret.positions.push_back({1, -1, 1});
-	ret.positions.push_back({-1, 1, 1});
-	ret.positions.push_back({-1, 1, 1});
-	ret.positions.push_back({1, -1, 1});
-	ret.positions.push_back({1, 1, 1});
+	ret.positions.push_back({-size, -size, size});
+	ret.positions.push_back({size, -size, size});
+	ret.positions.push_back({-size, size, size});
+	ret.positions.push_back({-size, size, size});
+	ret.positions.push_back({size, -size, size});
+	ret.positions.push_back({size, size, size});
 	ret.uvs.push_back({3./4., 2./3.});
 	ret.uvs.push_back({2./4., 2./3.});
 	ret.uvs.push_back({3./4., 1./3.});
@@ -201,12 +201,12 @@ Mesh makeCube() {
 	ret.uvs.push_back({2./4., 2./3.});
 	ret.uvs.push_back({2./4., 1./3.});
 
-	ret.positions.push_back({-1, -1, -1});
-	ret.positions.push_back({-1, -1, 1});
-	ret.positions.push_back({-1, 1, -1});
-	ret.positions.push_back({-1, 1, -1});
-	ret.positions.push_back({-1, -1, 1});
-	ret.positions.push_back({-1, 1, 1});
+	ret.positions.push_back({-size, -size, -size});
+	ret.positions.push_back({-size, -size, size});
+	ret.positions.push_back({-size, size, -size});
+	ret.positions.push_back({-size, size, -size});
+	ret.positions.push_back({-size, -size, size});
+	ret.positions.push_back({-size, size, size});
 	ret.uvs.push_back({4./4., 2./3.});
 	ret.uvs.push_back({3./4., 2./3.});
 	ret.uvs.push_back({4./4., 1./3.});
@@ -214,12 +214,12 @@ Mesh makeCube() {
 	ret.uvs.push_back({3./4., 2./3.});
 	ret.uvs.push_back({3./4., 1./3.});
 
-	ret.positions.push_back({-1, 1, -1});
-	ret.positions.push_back({-1, 1, 1});
-	ret.positions.push_back({1, 1, -1});
-	ret.positions.push_back({1, 1, -1});
-	ret.positions.push_back({-1, 1, 1});
-	ret.positions.push_back({1, 1, 1});
+	ret.positions.push_back({-size, size, -size});
+	ret.positions.push_back({-size, size, size});
+	ret.positions.push_back({size, size, -size});
+	ret.positions.push_back({size, size, -size});
+	ret.positions.push_back({-size, size, size});
+	ret.positions.push_back({size, size, size});
 	ret.uvs.push_back({1./4., 0./3.});
 	ret.uvs.push_back({2./4., 0./3.});
 	ret.uvs.push_back({1./4., 1./3.});
@@ -227,12 +227,12 @@ Mesh makeCube() {
 	ret.uvs.push_back({2./4., 0./3.});
 	ret.uvs.push_back({2./4., 1./3.});
 
-	ret.positions.push_back({-1, -1, -1});
-	ret.positions.push_back({-1, -1, 1});
-	ret.positions.push_back({1, -1, -1});
-	ret.positions.push_back({1, -1, -1});
-	ret.positions.push_back({-1, -1, 1});
-	ret.positions.push_back({1, -1, 1});
+	ret.positions.push_back({-size, -size, -size});
+	ret.positions.push_back({-size, -size, size});
+	ret.positions.push_back({size, -size, -size});
+	ret.positions.push_back({size, -size, -size});
+	ret.positions.push_back({-size, -size, size});
+	ret.positions.push_back({size, -size, size});
 	ret.uvs.push_back({1./4., 3./3.});
 	ret.uvs.push_back({2./4., 3./3.});
 	ret.uvs.push_back({1./4., 2./3.});
