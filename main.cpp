@@ -30,7 +30,7 @@ std::shared_ptr<Model> fox;
 
 std::vector<glm::vec2> CreateOffsets(float angle) {
 	std::vector<glm::vec2> offsets = std::vector<glm::vec2>(N);
-	const float aspecRatio = WindowWidth / WindowHeight;
+	const float aspecRatio = WindowWidth / (float)WindowHeight;
 
 	const float radius = 0.5f;
 
@@ -55,12 +55,12 @@ void RenderGui()
 {
 	ImGui::Begin("Menu");
 
-	ImGui::SliderFloat("A", &program->A, 0.0f, 1.0f);
-	ImGui::SliderFloat("S1", &program->S1, 0.0f, 100.0f);
-	ImGui::SliderFloat("f", &program->f, 0.0f, 10.0f);
+	ImGui::SliderFloat("A", &program->A, 0.001f, 1.0f);
+	ImGui::SliderFloat("S1", &program->S1, program->Far*0.8f, 0.95f * program->Far);
+	ImGui::SliderFloat("f", &program->f, 0.001f, 2.0f);
 	ImGui::SliderFloat("Far", &program->Far, 0.0f, 100.0f);
-	ImGui::SliderFloat("maxCoc", &program->maxCoc, 0.0f, 100.0f);
-	ImGui::SliderFloat("sensorHeight", &program->sensorHeight, 0.0f, 1.0f);
+	ImGui::SliderFloat("maxCoc", &program->maxCoc, 0.0001f, 0.3f);
+	ImGui::SliderFloat("sensorHeight", &program->sensorHeight, 0.001f, 0.1f);
 
 	ImGui::End();
 }
@@ -127,7 +127,7 @@ int main() {
 
 
 	glm::mat4 viewMatrix = glm::mat4(1);
-	glm::mat4 perspectiveMatrix = glm::perspective(glm::radians(45.f), WindowWidth / (float)WindowHeight, 0.1f, 40.f);
+	glm::mat4 perspectiveMatrix = glm::perspective(glm::radians(45.f), WindowWidth / (float)WindowHeight, 0.1f, 40.0f);
 	float modelAngle = 0;
 
 	// FRAMEBUFFER CREATION
@@ -243,9 +243,10 @@ int main() {
 
 	// MAIN LOOP
 
-	auto offsets1 = CreateOffsets(-(Pi / 4.0f));
-	auto offsets2 = CreateOffsets((Pi / 4.0f));
+	auto offsets1 = CreateOffsets((Pi / 3.0f));
+	auto offsets2 = CreateOffsets(-(Pi / 3.0f));
 	auto offsets3 = CreateOffsets(0.0f);
+	auto offsets4 = CreateOffsets(0.0f);
 
 
 	// Setup Dear ImGui context
@@ -258,7 +259,7 @@ int main() {
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 
-	objects.push_back(Object(fox, 0.01f, { -0.5f,0.0f,0.0f }));
+	objects.push_back(Object(fox, 1.0f, { -0.5f,0.0f,0.0f }));
 	objects.push_back(Object(dragon, 0.001f, {0.5f,0.0f,0.0f}));
 
 	while (!glfwWindowShouldClose(window))
@@ -341,6 +342,22 @@ int main() {
 
 		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+		// STAGE 1 - skybox
+
+		glUseProgram(skyProgram);
+		glDisable(GL_CULL_FACE);
+		glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
+
+		glUniform1i(20, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, skyTexture);
+		glBindVertexArray(sky.vao);
+		glDrawArrays(GL_TRIANGLES, 0, sky.count);
+
+
 		glUseProgram(firstProgram);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
@@ -361,19 +378,7 @@ int main() {
 			glDrawArrays(GL_TRIANGLES, 0, obj.model->mesh.count);
 		}
 
-		// STAGE 1 - skybox
 
-		glUseProgram(skyProgram);
-		glDepthFunc(GL_LEQUAL);
-		glDisable(GL_CULL_FACE);
-		glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
-
-		glUniform1i(20, 0);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, skyTexture);
-		glBindVertexArray(sky.vao);
-		glDrawArrays(GL_TRIANGLES, 0, sky.count);
 
 		// STAGE 2
 		// MM: przejscie do kolejnego etapu rysowania - rysowanie do textury kloloru
@@ -446,6 +451,22 @@ int main() {
 
 		glBindVertexArray(quad.vao);
 		glDrawArrays(GL_TRIANGLES, 0, quad.count);
+
+		// MM: update tekstury koloru
+		glBindFramebuffer(GL_FRAMEBUFFER, gBlurBuffer2);
+		glUseProgram(blur2Program);
+
+		// Uniforms MM: podpinanie tekstur potrzebnych do nadania efektu
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, gCol);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, gDepth);
+
+		glUniform2fv(2, N, (GLfloat*)offsets4.data());
+
+		glBindVertexArray(quad.vao);
+		glDrawArrays(GL_TRIANGLES, 0, quad.count);
+
 		// STAGE 4
 		// MM: ostateczne narysowanie tekstury - obraz na ekran;
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);

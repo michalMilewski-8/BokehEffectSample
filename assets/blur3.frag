@@ -42,5 +42,6 @@ void main() {
 	vec4 rescolor = finalColor/totalWeight;
 
 	color = min(rescolor,texture(colorTextureB, fragTexCoord));
+//	color = rescolor;
 //	color = vec4(centerDepth,centerDepth,centerDepth,1.0f);
 }

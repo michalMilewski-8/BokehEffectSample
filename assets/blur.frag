@@ -24,4 +24,8 @@ void main() {
 	float c = A*(abs(S2-S1)/S2) * (f/(S1-f));
 	color.a = clamp(c/sensorHeight,0.0f,maxCoc);
 
+//	color.x = depth;
+//	color.y = depth;
+//	color.z = depth;
+
 }
