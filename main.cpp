@@ -127,7 +127,6 @@ int main() {
 
 
 	glm::mat4 viewMatrix = glm::mat4(1);
-	glm::mat4 oldViewMatrix = glm::mat4(1);
 	glm::mat4 perspectiveMatrix = glm::perspective(glm::radians(45.f), WindowWidth / (float)WindowHeight, 0.1f, 40.f);
 	float modelAngle = 0;
 
@@ -136,7 +135,7 @@ int main() {
 	GLuint gBuffer;
 	glGenFramebuffers(1, &gBuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-	GLuint gPos, gNorm, gAlb, gEmit, gDepth, gVel;
+	GLuint gPos, gNorm, gAlb, gDepth;
 
 	glGenTextures(1, &gPos);
 	glBindTexture(GL_TEXTURE_2D, gPos);
@@ -159,31 +158,12 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlb, 0);
 
-	glGenTextures(1, &gEmit);
-	glBindTexture(GL_TEXTURE_2D, gEmit);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, WindowWidth, WindowHeight, 0, GL_RGB, GL_FLOAT, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gEmit, 0);
-
-	glGenTextures(1, &gVel);
-	glBindTexture(GL_TEXTURE_2D, gVel);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, WindowWidth, WindowHeight, 0, GL_RG, GL_FLOAT, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, gVel, 0);
-
 	glGenTextures(1, &gDepth);
 	glBindTexture(GL_TEXTURE_2D, gDepth);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, WindowWidth, WindowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, gDepth, 0);
-
-	//glGenRenderbuffers(1, &gDepth);
-	//glBindRenderbuffer(GL_RENDERBUFFER, gDepth);
-	//glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, WindowWidth, WindowHeight);
-	//glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, gDepth);
 
 	// TODO 4: Dodanie tekstury predkosci do listy attachmentow
 	unsigned int attachments[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
@@ -332,11 +312,6 @@ int main() {
 			while (cameraRotationDegrees.y < 0) cameraRotationDegrees.y += 360;
 		}
 
-		if (running || moveCamera) {
-			// TODO 6: Zapisywanie poprzedniej macierzy widoku
-			oldViewMatrix = viewMatrix;
-		}
-
 		if (!ImGui::GetIO().WantCaptureMouse) {
 			viewMatrix = glm::mat4(1);
 			viewMatrix = glm::rotate(viewMatrix, glm::radians(cameraRotationDegrees.x), { 1, 0, 0 });
@@ -376,10 +351,8 @@ int main() {
 			glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(obj.modelMatrix));
 			glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 			glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
-			glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(obj.oldModelMatrix));
-			glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(oldViewMatrix));
-			glUniformMatrix4fv(15, 1, GL_FALSE, glm::value_ptr(glm::inverse(viewMatrix)));
-			glUniformMatrix4fv(16, 1, GL_FALSE, glm::value_ptr(glm::inverse(obj.modelMatrix)));
+			glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(glm::inverse(viewMatrix)));
+			glUniformMatrix4fv(14, 1, GL_FALSE, glm::value_ptr(glm::inverse(obj.modelMatrix)));
 
 			glUniform1i(20, 0);
 			glActiveTexture(GL_TEXTURE0);
@@ -395,7 +368,6 @@ int main() {
 		glDisable(GL_CULL_FACE);
 		glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
-		glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(oldViewMatrix));
 
 		glUniform1i(20, 0);
 		glActiveTexture(GL_TEXTURE0);
@@ -416,12 +388,9 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, gNorm);
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, gAlb);
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, gEmit);
 		glUniform1i(20, 0);
 		glUniform1i(21, 1);
 		glUniform1i(22, 2);
-		glUniform1i(23, 3);
 
 		glBindVertexArray(quad.vao);
 		glDrawArrays(GL_TRIANGLES, 0, quad.count);

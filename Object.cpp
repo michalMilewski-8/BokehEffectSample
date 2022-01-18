@@ -5,7 +5,6 @@ Object::Object(std::shared_ptr<Model> model_,float scale_,glm::vec3 pos_)
 {
 	model = model_;
 	modelMatrix = glm::mat4(1);
-	oldModelMatrix = glm::mat4(1);
 	speed = 0;
 	angle = 0;
 	pos = pos_;
@@ -14,7 +13,6 @@ Object::Object(std::shared_ptr<Model> model_,float scale_,glm::vec3 pos_)
 
 void Object::UpdateObject(float dt)
 {
-	oldModelMatrix = modelMatrix;
 	//speed += dt / 2;
 	//float step = dt * glm::sin(speed);
 	//angle += step * 300;
