@@ -6,6 +6,7 @@ layout(location = 0) in vec3 fragPos;
 layout(location = 1) in vec3 fragNormal;
 layout(location = 2) in vec2 fragTexCoord;
 layout(location = 3) in vec3 viewV;
+layout(location = 4) in vec3 worldPos;
 
 layout (location = 20) uniform sampler2D colorTexture;
 
@@ -27,7 +28,7 @@ void main() {
 
     // diffuse 
     float diffStrength = 0.7;
-    vec3 lightDir = normalize(lightPos.xyz - position);
+    vec3 lightDir = normalize(lightPos.xyz - worldPos);
     float diff = max(dot(normal, lightDir), 0.0);
     vec3 diffuse = diffStrength * diff * lightColor;
     

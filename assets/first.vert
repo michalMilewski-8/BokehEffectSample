@@ -14,6 +14,7 @@ layout(location = 0) out vec3 fragPos;
 layout(location = 1) out vec3 fragNormal;
 layout(location = 2) out vec2 fragTexCoord;
 layout(location = 3) out vec3 viewV;
+layout(location = 4) out vec3 worldPos;
 
 void main() {
 	gl_Position = perspective * view * model * vec4(position, 1.0);
@@ -21,7 +22,7 @@ void main() {
 	fragNormal = vec3(invModel* vec4(normal, 0));
 	fragTexCoord = texCoord;
 
-	vec3 worldPos =  (model * vec4(position, 1.0)).xyz;
+	worldPos =  (model * vec4(position, 1.0)).xyz;
 	vec3 camPos = (invView* vec4(0.0f, 0.0f, 0.0f, 1.0f)).xyz;
 	viewV = camPos - worldPos;
 }
