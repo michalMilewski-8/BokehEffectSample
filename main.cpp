@@ -25,8 +25,7 @@ constexpr int N = 144;
 
 std::shared_ptr<Program> program;
 std::vector<Object> objects;
-std::shared_ptr<Model> dragon;
-std::shared_ptr<Model> fox;
+std::shared_ptr<Model> dragon, fox, car, bob, sniper, cat;
 
 std::vector<glm::vec2> CreateOffsets(float angle) {
 	std::vector<glm::vec2> offsets = std::vector<glm::vec2>(N);
@@ -118,6 +117,26 @@ int main() {
 	fox = std::make_shared<Model>
 		("assets/low-poly-fox-by-pixelmannen-obj/low-poly-fox-by-pixelmannen.obj",
 			"assets/low-poly-fox-by-pixelmannen-obj/texture.png"
+			, 1.0f);
+
+	car = std::make_shared<Model>
+		("assets/camero-2010-low-poly-obj/camero-2010-low-poly.obj",
+			"assets/camero-2010-low-poly-obj/camero_map.png"
+			, 1.0f);
+
+	bob = std::make_shared<Model>
+		("assets/meet-bob-obj/meet-bob.obj",
+			"assets/meet-bob-obj/rp_eric_rigged_001_dif.jpg"
+			, 1.0f);
+
+	sniper = std::make_shared<Model>
+		("assets/ksr-29-sniper-rifle-obj/ksr-29-sniper-rifle.obj",
+			"assets/ksr-29-sniper-rifle-obj/Sniper_KSR_29_Col.jpg"
+			, 1.0f);
+
+	cat = std::make_shared<Model>
+		("assets/Cat/12221_Cat_v1_l3.obj",
+			"assets/Cat/Cat_diffuse.jpg"
 			, 1.0f);
 
 	glm::vec3 cameraPos = { 0, 0, -5 };
@@ -262,7 +281,11 @@ int main() {
 	ImGui::StyleColorsDark();
 
 	//objects.push_back(Object(fox, { 0.0f,0.0f,0.0f }));
-	objects.push_back(Object(dragon, { 0.0f,0.0f,0.0f }));
+	//objects.push_back(Object(dragon, { 0.0f,0.0f,0.0f }));
+	//objects.push_back(Object(car, { 0.0f,0.0f,0.0f }));
+	//objects.push_back(Object(bob, { 0.0f,0.0f,0.0f }));
+	//objects.push_back(Object(sniper, { 0.0f,0.0f,0.0f }));
+	objects.push_back(Object(cat, { 0.0f,0.0f,0.0f }));
 
 	while (!glfwWindowShouldClose(window))
 	{

@@ -4,6 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <sstream>
+#include <algorithm>
 
 Mesh loadMesh(const char* filename, float scale) {
 	Mesh ret;
@@ -46,28 +48,76 @@ Mesh loadMesh(const char* filename, float scale) {
 		}
 
 		if (header == "f") {
-			std::array<unsigned int, 3> ps, ns, us;
-			file >> ps[0];
-			file.ignore(1) >> us[0];
-			file.ignore(1) >> ns[0];
+			std::string line;
+			std::stringstream ss;
+			std::getline(file, line);
+			int n = std::count(line.begin(), line.end(), '/');
 
-			file >> ps[1];
-			file.ignore(1) >> us[1];
-			file.ignore(1) >> ns[1];
+			ss << line;
+			if (n == 6)
+			{
+				std::array<unsigned int, 3> ps, ns, us;
+				ss >> ps[0];
+				ss.ignore(1) >> us[0];
+				ss.ignore(1) >> ns[0];
 
-			file >> ps[2];
-			file.ignore(1) >> us[2];
-			file.ignore(1) >> ns[2];
+				ss >> ps[1];
+				ss.ignore(1) >> us[1];
+				ss.ignore(1) >> ns[1];
 
-			pIndices.push_back(ps[0] - 1);
-			nIndices.push_back(ns[0] - 1);
-			uIndices.push_back(us[0] - 1);
-			pIndices.push_back(ps[1] - 1);
-			nIndices.push_back(ns[1] - 1);
-			uIndices.push_back(us[1] - 1);
-			pIndices.push_back(ps[2] - 1);
-			nIndices.push_back(ns[2] - 1);
-			uIndices.push_back(us[2] - 1);
+				ss >> ps[2];
+				ss.ignore(1) >> us[2];
+				ss.ignore(1) >> ns[2];
+
+				pIndices.push_back(ps[0] - 1);
+				nIndices.push_back(ns[0] - 1);
+				uIndices.push_back(us[0] - 1);
+				pIndices.push_back(ps[1] - 1);
+				nIndices.push_back(ns[1] - 1);
+				uIndices.push_back(us[1] - 1);
+				pIndices.push_back(ps[2] - 1);
+				nIndices.push_back(ns[2] - 1);
+				uIndices.push_back(us[2] - 1);
+			}
+			if (n == 8)
+			{
+				std::array<unsigned int, 4> ps, ns, us;
+				ss >> ps[0];
+				ss.ignore(1) >> us[0];
+				ss.ignore(1) >> ns[0];
+
+				ss >> ps[1];
+				ss.ignore(1) >> us[1];
+				ss.ignore(1) >> ns[1];
+
+				ss >> ps[2];
+				ss.ignore(1) >> us[2];
+				ss.ignore(1) >> ns[2];
+
+				ss >> ps[3];
+				ss.ignore(1) >> us[3];
+				ss.ignore(1) >> ns[3];
+
+				pIndices.push_back(ps[0] - 1);
+				nIndices.push_back(ns[0] - 1);
+				uIndices.push_back(us[0] - 1);
+				pIndices.push_back(ps[1] - 1);
+				nIndices.push_back(ns[1] - 1);
+				uIndices.push_back(us[1] - 1);
+				pIndices.push_back(ps[2] - 1);
+				nIndices.push_back(ns[2] - 1);
+				uIndices.push_back(us[2] - 1);
+
+				pIndices.push_back(ps[0] - 1);
+				nIndices.push_back(ns[0] - 1);
+				uIndices.push_back(us[0] - 1);
+				pIndices.push_back(ps[2] - 1);
+				nIndices.push_back(ns[2] - 1);
+				uIndices.push_back(us[2] - 1);
+				pIndices.push_back(ps[3] - 1);
+				nIndices.push_back(ns[3] - 1);
+				uIndices.push_back(us[3] - 1);
+			}
 		}
 	}
 
@@ -99,7 +149,7 @@ Mesh loadMesh(const char* filename, float scale) {
 	float scale_int_z = 2.0f / (max_z - min_z);
 	float scale_int = std::min(std::min(scale_int_x, scale_int_x), scale_int_z);
 	for (size_t i = 0; i < pIndices.size(); i++) {
-		ret.positions.push_back(scale * scale_int*(loadedPositions[pIndices[i]] - mid));
+		ret.positions.push_back(scale * scale_int * (loadedPositions[pIndices[i]] - mid));
 		ret.normals.push_back(loadedNormals[nIndices[i]]);
 		ret.uvs.push_back(loadedUvs[uIndices[i]]);
 	}
