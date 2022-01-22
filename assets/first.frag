@@ -23,7 +23,7 @@ void main() {
 
 	vec3 objectColor = texture(colorTexture, fragTexCoord).rgb;
 	// ambient
-    float ambientStrength = 0.3;
+    float ambientStrength = 0.5;
     vec3 ambient = ambientStrength * lightColor;
 
     // diffuse 
