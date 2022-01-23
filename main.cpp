@@ -55,7 +55,7 @@ void RenderGui()
 	ImGui::Begin("Menu");
 
 	ImGui::SliderFloat("A", &program->A, 0.001f, 1.0f);
-	ImGui::SliderFloat("S1", &program->S1, program->Far * 0.4f, 0.99f * program->Far);
+	ImGui::SliderFloat("S1", &program->S1, program->Far * 0.01f, 0.99f * program->Far);
 	ImGui::SliderFloat("f", &program->f, 0.001f, 2.0f);
 	//ImGui::SliderFloat("Far", &program->Far, 0.0f, 100.0f);
 	ImGui::SliderFloat("maxCoc", &program->maxCoc, 0.0001f, 0.3f);
@@ -112,34 +112,34 @@ int main() {
 	dragon = std::make_shared<Model>
 		("assets/alduin-dragon-obj/alduin-dragon.obj",
 			"assets/alduin-dragon-obj/alduin.jpg"
-			, 1.0f);
+			, 3.0f);
 
-	fox = std::make_shared<Model>
-		("assets/low-poly-fox-by-pixelmannen-obj/low-poly-fox-by-pixelmannen.obj",
-			"assets/low-poly-fox-by-pixelmannen-obj/texture.png"
-			, 1.0f);
+	//fox = std::make_shared<Model>
+	//	("assets/low-poly-fox-by-pixelmannen-obj/low-poly-fox-by-pixelmannen.obj",
+	//		"assets/low-poly-fox-by-pixelmannen-obj/texture.png"
+	//		, 1.0f);
 
-	car = std::make_shared<Model>
-		("assets/camero-2010-low-poly-obj/camero-2010-low-poly.obj",
-			"assets/camero-2010-low-poly-obj/camero_map.png"
-			, 1.0f);
+	//car = std::make_shared<Model>
+	//	("assets/camero-2010-low-poly-obj/camero-2010-low-poly.obj",
+	//		"assets/camero-2010-low-poly-obj/camero_map.png"
+	//		, 1.0f);
 
 	bob = std::make_shared<Model>
 		("assets/meet-bob-obj/meet-bob.obj",
 			"assets/meet-bob-obj/rp_eric_rigged_001_dif.jpg"
-			, 1.0f);
+			, 0.01f);
 
-	sniper = std::make_shared<Model>
-		("assets/ksr-29-sniper-rifle-obj/ksr-29-sniper-rifle.obj",
-			"assets/ksr-29-sniper-rifle-obj/Sniper_KSR_29_Col.jpg"
-			, 1.0f);
+	//sniper = std::make_shared<Model>
+	//	("assets/ksr-29-sniper-rifle-obj/ksr-29-sniper-rifle.obj",
+	//		"assets/ksr-29-sniper-rifle-obj/Sniper_KSR_29_Col.jpg"
+	//		, 1.0f);
 
-	cat = std::make_shared<Model>
-		("assets/Cat/12221_Cat_v1_l3.obj",
-			"assets/Cat/Cat_diffuse.jpg"
-			, 1.0f, true);
+	//cat = std::make_shared<Model>
+	//	("assets/Cat/12221_Cat_v1_l3.obj",
+	//		"assets/Cat/Cat_diffuse.jpg"
+	//		, 1.0f, true);
 
-	glm::vec3 cameraPos = { 0, 0, -5 };
+	glm::vec3 cameraPos = { 0, 0, -2 };
 	glm::vec2 cameraRotationDegrees = { 0,0 };
 	double cursorX, cursorY;
 	glfwGetCursorPos(window, &cursorX, &cursorY);
@@ -281,11 +281,11 @@ int main() {
 	ImGui::StyleColorsDark();
 
 	//objects.push_back(Object(fox, { 0.0f,0.0f,0.0f }));
-	//objects.push_back(Object(dragon, { 0.0f,0.0f,0.0f }));
-	//objects.push_back(Object(car, { 0.0f,0.0f,0.0f }));
-	//objects.push_back(Object(bob, { 0.0f,0.0f,0.0f }));
-	//objects.push_back(Object(sniper, { 0.0f,0.0f,0.0f }));
-	objects.push_back(Object(cat, { 0.0f,0.0f,0.0f }));
+	//objects.push_back(Object(dragon, { 0.0f,0.0f,-5.0f }));
+	//objects.push_back(Object(car, { 0.0f,1.0f,0.0f }));
+	//objects.push_back(Object(bob, { 0.0f,-0.0f,1.8f }));
+	//objects.push_back(Object(sniper, { 1.0f,0.0f,0.0f }));
+	//objects.push_back(Object(cat, { -1.0f,0.0f,0.0f }));
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -351,7 +351,7 @@ int main() {
 			//cameraUp = cameraUp * viewMatrix;
 			cameraSide = cameraSide * viewMatrix;
 
-			const float movementSpeed = 5.0f * dt;
+			const float movementSpeed = 5.0f * 0.0001f;
 			if (goForward) cameraPos += glm::vec3(cameraFront) * movementSpeed;
 			if (goBack) cameraPos -= glm::vec3(cameraFront) * movementSpeed;
 			if (goLeft) cameraPos += glm::vec3(cameraSide) * movementSpeed;
