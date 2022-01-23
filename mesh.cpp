@@ -7,7 +7,7 @@
 #include <sstream>
 #include <algorithm>
 
-Mesh loadMesh(const char* filename, float scale) {
+Mesh loadMesh(const char* filename, float scale, bool swap_yz) {
 	Mesh ret;
 
 	std::vector<glm::vec3> loadedPositions;
@@ -31,6 +31,8 @@ Mesh loadMesh(const char* filename, float scale) {
 		if (header == "v") {
 			glm::vec3 p;
 			file >> p.x >> p.y >> p.z;
+			float t;
+			if (swap_yz) { t = p.z; p.z = -p.y; p.y = t; }
 			loadedPositions.push_back(p);
 		}
 
@@ -44,6 +46,8 @@ Mesh loadMesh(const char* filename, float scale) {
 		if (header == "vn") {
 			glm::vec3 n;
 			file >> n.x >> n.y >> n.z;
+			float t;
+			if (swap_yz) { t = n.z; n.z = -n.y; n.y = t; }
 			loadedNormals.push_back(n);
 		}
 

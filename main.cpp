@@ -137,7 +137,7 @@ int main() {
 	cat = std::make_shared<Model>
 		("assets/Cat/12221_Cat_v1_l3.obj",
 			"assets/Cat/Cat_diffuse.jpg"
-			, 1.0f);
+			, 1.0f, true);
 
 	glm::vec3 cameraPos = { 0, 0, -5 };
 	glm::vec2 cameraRotationDegrees = { 0,0 };
