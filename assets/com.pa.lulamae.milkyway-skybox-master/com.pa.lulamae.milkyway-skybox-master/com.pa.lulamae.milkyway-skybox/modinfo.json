@@ -1,0 +1,28 @@
+{
+  "context": "client",
+  "identifier": "com.pa.lula-mae.milkyway-skybox",
+  "display_name": "Milkyway Skybox",
+  "description": "System is located in the center of the Milkyway Galaxy. NOTE: After enabling skybox mod, go to game Settings > Graphics to set your default skybox.",
+  "author": "Lula Mae",
+  "version": "2.0.2",
+  "build": "114880",
+  "date": "2020-09-06",
+  "signature": "not yet implemented",
+  "forum": "https://forums.uberent.com/threads/milkyway-skybox.72686/",
+  "priority": 100,
+  "icon": "https://raw.githubusercontent.com/Lula-Mae/mod-image-support/master/milky-way-galaxy-icon.jpg",
+  "category":
+  [
+    "skybox",
+    "ui",
+    "classic",
+    "titans"
+  ],
+  "scenes":
+  {
+      "settings":
+      [
+          "coui://ui/mods/com.pa.lulamae.milkyway-skybox/settings.js"
+      ]
+  }
+}

@@ -55,11 +55,11 @@ void RenderGui()
 	ImGui::Begin("Menu");
 
 	ImGui::SliderFloat("A", &program->A, 0.001f, 1.0f);
-	ImGui::SliderFloat("S1", &program->S1, program->Far * 0.8f, 0.95f * program->Far);
+	ImGui::SliderFloat("S1", &program->S1, program->Far * 0.4f, 0.99f * program->Far);
 	ImGui::SliderFloat("f", &program->f, 0.001f, 2.0f);
-	ImGui::SliderFloat("Far", &program->Far, 0.0f, 100.0f);
+	//ImGui::SliderFloat("Far", &program->Far, 0.0f, 100.0f);
 	ImGui::SliderFloat("maxCoc", &program->maxCoc, 0.0001f, 0.3f);
-	ImGui::SliderFloat("sensorHeight", &program->sensorHeight, 0.001f, 0.1f);
+	//ImGui::SliderFloat("sensorHeight", &program->sensorHeight, 0.001f, 0.1f);
 
 	ImGui::End();
 }
@@ -108,7 +108,7 @@ int main() {
 	GLuint blurProgram = loadShaders("assets/quad.vert", "assets/blur.frag");
 	GLuint blur2Program = loadShaders("assets/quad.vert", "assets/blur2.frag");
 	GLuint blur3Program = loadShaders("assets/quad.vert", "assets/blur3.frag");
-	GLuint skyTexture = loadTexture("assets/canyon.jpg");
+	GLuint skyTexture = loadTexture("assets/pngegg2.png");
 	dragon = std::make_shared<Model>
 		("assets/alduin-dragon-obj/alduin-dragon.obj",
 			"assets/alduin-dragon-obj/alduin.jpg"
@@ -371,16 +371,16 @@ int main() {
 
 		// STAGE 1 - skybox
 
-		//glUseProgram(skyProgram);
-		//glDisable(GL_CULL_FACE);
-		//glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
-		//glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
+		glUseProgram(skyProgram);
+		glDisable(GL_CULL_FACE);
+		glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+		glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(perspectiveMatrix));
 
-		//glUniform1i(20, 0);
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, skyTexture);
-		//glBindVertexArray(sky.vao);
-		//glDrawArrays(GL_TRIANGLES, 0, sky.count);
+		glUniform1i(20, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, skyTexture);
+		glBindVertexArray(sky.vao);
+		glDrawArrays(GL_TRIANGLES, 0, sky.count);
 
 
 		glUseProgram(firstProgram);

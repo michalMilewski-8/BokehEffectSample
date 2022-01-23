@@ -1,0 +1,5 @@
+resource-root: /pa
+srgb-texname-expression: diffuse|skybox
+texture-max-size: 2048
+texture-format-alpha: rgba
+texture-format-noalpha: rgba
