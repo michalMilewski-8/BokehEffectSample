@@ -13,7 +13,7 @@ layout(binding = 1) uniform sampler2D depthTexture;
 
 layout(location = 1) uniform vec2 offset[N] ;
 
-const float bleedingBias = 0.02f;
+const float bleedingBias = 0.01f;
 const float bleedingMult = 30.0f;
 
 void main() {

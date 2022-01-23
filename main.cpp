@@ -26,6 +26,7 @@ constexpr int N = 144;
 std::shared_ptr<Program> program;
 std::vector<Object> objects;
 std::shared_ptr<Model> dragon, fox, car, bob, sniper, cat;
+std::vector<glm::vec2> offsets1, offsets2, offsets3, offsets4;
 
 std::vector<glm::vec2> CreateOffsets(float angle) {
 	std::vector<glm::vec2> offsets = std::vector<glm::vec2>(N);
@@ -60,6 +61,27 @@ void RenderGui()
 	//ImGui::SliderFloat("Far", &program->Far, 0.0f, 100.0f);
 	ImGui::SliderFloat("maxCoc", &program->maxCoc, 0.0001f, 0.3f);
 	//ImGui::SliderFloat("sensorHeight", &program->sensorHeight, 0.001f, 0.1f);
+	static int e = 1;
+	bool need_change = false;
+
+	if (ImGui::RadioButton("Hexagon", &e, 1)) { need_change = true;}
+	if (ImGui::RadioButton("Octagon", &e, 2)) { need_change = true;}
+
+	if (need_change) {
+		switch (e) {
+		case 1: offsets1 = CreateOffsets((Pi / 3.0f));
+			offsets2 = CreateOffsets(-(Pi / 3.0f));
+			offsets3 = CreateOffsets(0.0f);
+			offsets4 = CreateOffsets(0.0f);
+			break;
+		case 2: offsets1 = CreateOffsets((Pi / 2.0f));
+			offsets2 = CreateOffsets(-(Pi / 4.0f));
+			offsets3 = CreateOffsets((Pi / 4.0f));
+			offsets4 = CreateOffsets(0.0f);
+			break;
+		}
+	}
+
 
 	ImGui::End();
 }
@@ -127,7 +149,7 @@ int main() {
 	bob = std::make_shared<Model>
 		("assets/meet-bob-obj/meet-bob.obj",
 			"assets/meet-bob-obj/rp_eric_rigged_001_dif.jpg"
-			, 0.01f);
+			, 0.03f);
 
 	//sniper = std::make_shared<Model>
 	//	("assets/ksr-29-sniper-rifle-obj/ksr-29-sniper-rifle.obj",
@@ -264,10 +286,10 @@ int main() {
 
 	// MAIN LOOP
 
-	auto offsets1 = CreateOffsets((Pi / 3.0f));
-	auto offsets2 = CreateOffsets(-(Pi / 3.0f));
-	auto offsets3 = CreateOffsets(0.0f);
-	auto offsets4 = CreateOffsets(0.0f);
+	offsets1 = CreateOffsets((Pi / 3.0f));
+	offsets2 = CreateOffsets(-(Pi / 3.0f));
+	offsets3 = CreateOffsets(0.0f);
+	offsets4 = CreateOffsets(0.0f);
 
 
 	// Setup Dear ImGui context
@@ -281,9 +303,9 @@ int main() {
 	ImGui::StyleColorsDark();
 
 	//objects.push_back(Object(fox, { 0.0f,0.0f,0.0f }));
-	//objects.push_back(Object(dragon, { 0.0f,0.0f,-5.0f }));
+	objects.push_back(Object(dragon, { 0.0f,0.0f,-5.0f }));
 	//objects.push_back(Object(car, { 0.0f,1.0f,0.0f }));
-	//objects.push_back(Object(bob, { 0.0f,-0.0f,1.8f }));
+	objects.push_back(Object(bob, { 0.0f,-0.0f,1.8f }));
 	//objects.push_back(Object(sniper, { 1.0f,0.0f,0.0f }));
 	//objects.push_back(Object(cat, { -1.0f,0.0f,0.0f }));
 
