@@ -18,6 +18,6 @@ struct Mesh {
 	std::vector<glm::vec2> uvs;
 };
 
-Mesh loadMesh(const char* filename,float scale=1.0f);
+Mesh loadMesh(const char* filename,float scale=1.0f, bool swap_yz = false);
 Mesh makeQuad();
 Mesh makeCube(float size);
